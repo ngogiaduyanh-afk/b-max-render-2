@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ảnh và khảo sát - Stress Detection AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header"><div class="logo"><i class="fas fa-sun"></i><span>StressAI</span></div><button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button></div>
+    <ul class="nav-menu">
+        <li class="nav-item"><a href="/" class="nav-link"><i class="fas fa-house"></i><span>Dashboard</span></a></li>
+        <li class="nav-item active"><a href="/capture" class="nav-link"><i class="fas fa-camera"></i><span>Ảnh + Khảo sát</span></a></li>
+        <li class="nav-item"><a href="/history" class="nav-link"><i class="fas fa-chart-line"></i><span>Lịch sử</span></a></li>
+    </ul>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar"><i class="fas fa-user"></i></div><span class="username">Người dùng</span></div></div>
+</nav>
+<main class="main-content">
+<header class="topbar"><button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button><div class="topbar-title"><h1>Đánh giá stress</h1><p class="date-display" id="currentDate"></p></div></header>
+<div class="page-content capture-page dual-assessment-page">
+    <div class="capture-column">
+        <section class="card capture-card">
+            <div class="card-header"><h2><i class="fas fa-camera-retro"></i> 1. Chọn ảnh khuôn mặt</h2></div>
+            <div class="card-body">
+                <div class="capture-area" id="captureArea">
+                    <div class="camera-container" id="cameraContainer" style="display:none;">
+                        <video id="cameraPreview" autoplay playsinline></video>
+                        <div class="camera-overlay"><div class="face-guide"></div></div>
+                        <div class="camera-controls"><button class="btn btn-capture" id="captureBtn"><i class="fas fa-circle"></i></button></div>
+                    </div>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                        <h3>Tải ảnh lên hoặc chụp ảnh</h3>
+                        <p>Chọn ảnh rõ khuôn mặt để mô hình stress nhận diện tốt hơn.</p>
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                        <div class="upload-buttons">
+                            <button class="btn btn-primary" id="openCameraBtn"><i class="fas fa-camera"></i> Mở Camera</button>
+                            <button class="btn btn-outline" id="chooseFileBtn"><i class="fas fa-folder-open"></i> Chọn từ máy</button>
+                        </div>
+                    </div>
+                    <div class="preview-area" id="previewArea" style="display:none;">
+                        <img id="previewImage" alt="Preview">
+                        <canvas id="captureCanvas" style="display:none;"></canvas>
+                        <div class="preview-actions">
+                            <button class="btn btn-outline" id="retakeBtn"><i class="fas fa-arrow-rotate-left"></i> Chọn lại</button>
+                            <button class="btn btn-primary" id="analyzeBtn"><i class="fas fa-wand-magic-sparkles"></i> Phân tích tổng hợp</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="card today-history-card" id="todayHistoryCard" style="display:none;">
+            <div class="card-header"><h2><i class="fas fa-clock-rotate-left"></i> Kết quả hôm nay</h2></div>
+            <div class="card-body"><div class="today-checkins" id="todayCheckins"></div></div>
+        </section>
+    </div>
+    <div class="capture-column">
+        <section class="card survey-card">
+            <div class="card-header"><h2><i class="fas fa-clipboard-list"></i> 2. Khảo sát theo mô tả</h2></div>
+            <div class="card-body">
+                <div class="survey-scale-note">Chọn mức phù hợp nhất với tình trạng hiện tại của bạn.</div>
+                <div id="surveyQuestions"></div>
+            </div>
+        </section>
+        <section class="card result-card" id="resultCard" style="display:none;">
+            <div class="card-header"><h2><i class="fas fa-magnifying-glass-chart"></i> 3. Kết quả tổng hợp</h2></div>
+            <div class="card-body">
+                <div class="analysis-loading" id="analysisLoading">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                    <p>Đang chạy mô hình ảnh và tính điểm khảo sát theo quy tắc mô tả...</p>
+                </div>
+                <div class="analysis-result" id="analysisResult" style="display:none;">
+                    <div class="emotion-display">
+                        <div class="emotion-icon" id="resultEmotionIcon"></div>
+                        <h3 class="emotion-label" id="resultEmotionLabel">--</h3>
+                        <div class="confidence-bar"><div class="confidence-fill" id="confidenceFill"></div><span class="confidence-text" id="confidenceText">0%</span></div>
+                    </div>
+                    <div class="result-highlight split-highlight">
+                        <div class="result-pill"><span>Điểm ảnh</span><strong id="imageScoreText">0/100</strong></div>
+                        <div class="result-pill"><span>Điểm khảo sát</span><strong id="surveyScoreText">0/100</strong></div>
+                        <div class="result-pill emphasis-pill"><span>Điểm tổng hợp</span><strong id="stressScoreText">0/100</strong></div>
+                    </div>
+                    <div class="rule-box">
+                        <div><strong id="surveyLevelText">--</strong></div>
+                        <small id="combinedRuleText">Quy tắc tổng hợp</small>
+                    </div>
+                    <div class="emotion-breakdown">
+                        <h4>Chi tiết dự đoán ảnh</h4>
+                        <div class="breakdown-item"><span class="breakdown-label"><i class="fas fa-face-smile-beam"></i> Happy</span><div class="breakdown-bar"><div class="breakdown-fill low" id="lowBar"></div></div><span class="breakdown-value" id="lowValue">0%</span></div>
+                        <div class="breakdown-item"><span class="breakdown-label"><i class="fas fa-face-meh"></i> Neutral</span><div class="breakdown-bar"><div class="breakdown-fill medium" id="mediumBar"></div></div><span class="breakdown-value" id="mediumValue">0%</span></div>
+                        <div class="breakdown-item"><span class="breakdown-label"><i class="fas fa-face-tired"></i> Sad</span><div class="breakdown-bar"><div class="breakdown-fill high" id="highBar"></div></div><span class="breakdown-value" id="highValue">0%</span></div>
+                    </div>
+                    <div class="recommend-box">
+                        <h4>Gợi ý</h4>
+                        <ul id="recommendList"></ul>
+                    </div>
+                    <div class="result-actions"><button class="btn btn-primary" id="saveResultBtn"><i class="fas fa-floppy-disk"></i> Lưu vào lịch sử</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</main>
+<script>window.FEATURE_CONFIG = {{ feature_config|tojson }};</script>
+<script src="{{ url_for('static', filename='js/db.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/capture.js') }}"></script>
+</body>
+</html>

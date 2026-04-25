@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử - Stress Detection AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header"><div class="logo"><i class="fas fa-sun"></i><span>StressAI</span></div><button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button></div>
+    <ul class="nav-menu">
+        <li class="nav-item"><a href="/" class="nav-link"><i class="fas fa-house"></i><span>Dashboard</span></a></li>
+        <li class="nav-item"><a href="/capture" class="nav-link"><i class="fas fa-camera"></i><span>Ảnh + Khảo sát</span></a></li>
+        <li class="nav-item active"><a href="/history" class="nav-link"><i class="fas fa-chart-line"></i><span>Lịch sử</span></a></li>
+    </ul>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar"><i class="fas fa-user"></i></div><span class="username">Người dùng</span></div></div>
+</nav>
+<main class="main-content">
+<header class="topbar"><button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button><div class="topbar-title"><h1>Lịch sử stress</h1><p class="date-display" id="currentDate"></p></div></header>
+<div class="page-content history-page">
+    <section class="card controls-card"><div class="card-body"><div class="history-controls"><div class="control-group"><label>Khoảng thời gian</label><div class="time-range-buttons"><button class="btn btn-sm btn-outline active" data-range="7">7 ngày</button><button class="btn btn-sm btn-outline" data-range="14">14 ngày</button><button class="btn btn-sm btn-outline" data-range="30">30 ngày</button></div></div></div></div></section>
+    <section class="card chart-card-full"><div class="card-header"><h2><i class="fas fa-chart-line"></i> Điểm tổng hợp theo thời gian</h2></div><div class="card-body"><div class="chart-container"><canvas id="emotionLineChart" width="900" height="400"></canvas></div><div class="no-data-placeholder" id="chartPlaceholder" style="display:none;"><i class="fas fa-chart-area"></i><p>Chưa có dữ liệu để hiển thị biểu đồ</p><a href="/capture" class="btn btn-primary"><i class="fas fa-camera"></i> Bắt đầu đánh giá</a></div></div></section>
+    <section class="card chart-card-full"><div class="card-header"><h2><i class="fas fa-clipboard-check"></i> Điểm khảo sát</h2></div><div class="card-body"><div class="chart-container"><canvas id="stressChart" width="900" height="300"></canvas></div></div></section>
+    <section class="card distribution-card"><div class="card-header"><h2><i class="fas fa-chart-pie"></i> Phân bố mức stress</h2></div><div class="card-body"><div class="distribution-grid"><div class="distribution-stats" id="distributionStats"><div class="dist-stat-item"><div class="dist-bar-container"><span class="dist-label"><i class="fas fa-face-smile-beam"></i> Stress thấp</span><div class="dist-bar"><div class="dist-fill low" id="distLow" style="width:0%"></div></div><span class="dist-value" id="distLowValue">0%</span></div></div><div class="dist-stat-item"><div class="dist-bar-container"><span class="dist-label"><i class="fas fa-face-meh"></i> Stress vừa</span><div class="dist-bar"><div class="dist-fill medium" id="distMedium" style="width:0%"></div></div><span class="dist-value" id="distMediumValue">0%</span></div></div><div class="dist-stat-item"><div class="dist-bar-container"><span class="dist-label"><i class="fas fa-face-tired"></i> Stress cao</span><div class="dist-bar"><div class="dist-fill high" id="distHigh" style="width:0%"></div></div><span class="dist-value" id="distHighValue">0%</span></div></div></div></div></div></section>
+    <section class="card timeline-card"><div class="card-header"><h2><i class="fas fa-timeline"></i> Dòng thời gian</h2></div><div class="card-body"><div class="timeline" id="emotionTimeline"></div></div></section>
+</div>
+</main>
+<script src="{{ url_for('static', filename='js/db.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
+</body>
+</html>

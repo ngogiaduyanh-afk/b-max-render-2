@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress Detection AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="logo"><i class="fas fa-sun"></i><span>StressAI</span></div>
+        <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    </div>
+    <ul class="nav-menu">
+        <li class="nav-item active"><a href="/" class="nav-link"><i class="fas fa-house"></i><span>Dashboard</span></a></li>
+        <li class="nav-item"><a href="/capture" class="nav-link"><i class="fas fa-camera"></i><span>Ảnh + Khảo sát</span></a></li>
+        <li class="nav-item"><a href="/history" class="nav-link"><i class="fas fa-chart-line"></i><span>Lịch sử</span></a></li>
+    </ul>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar"><i class="fas fa-user"></i></div><span class="username">Người dùng</span></div></div>
+</nav>
+<main class="main-content">
+    <header class="topbar">
+        <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+        <div class="topbar-title"><h1>Dashboard</h1><p class="date-display" id="currentDate"></p></div>
+        <div class="topbar-actions"><div class="streak-badge"><i class="fas fa-fire"></i><span id="streakCount">0</span> ngày liên tục</div></div>
+    </header>
+    <div class="dashboard-content">
+        <section class="card today-mood-card">
+            <div class="card-header"><h2><i class="fas fa-heart-pulse"></i> Kết quả tổng hợp gần nhất</h2></div>
+            <div class="card-body" id="todayMoodContent">
+                <div class="no-data-placeholder">
+                    <div class="placeholder-icon"><i class="fas fa-camera-retro"></i></div>
+                    <p>Chưa có kết quả hôm nay</p>
+                    <a href="/capture" class="btn btn-primary"><i class="fas fa-camera"></i> Phân tích ngay</a>
+                </div>
+            </div>
+        </section>
+        <section class="card stats-card">
+            <div class="card-header"><h2><i class="fas fa-chart-pie"></i> Thống kê nhanh</h2></div>
+            <div class="card-body">
+                <div class="stats-grid">
+                    <div class="stat-item"><div class="stat-icon happy"><i class="fas fa-face-smile-beam"></i></div><div class="stat-info"><span class="stat-value" id="happyCount">0</span><span class="stat-label">Stress thấp</span></div></div>
+                    <div class="stat-item"><div class="stat-icon neutral"><i class="fas fa-face-meh"></i></div><div class="stat-info"><span class="stat-value" id="neutralCount">0</span><span class="stat-label">Stress vừa</span></div></div>
+                    <div class="stat-item"><div class="stat-icon sad"><i class="fas fa-face-tired"></i></div><div class="stat-info"><span class="stat-value" id="sadCount">0</span><span class="stat-label">Stress cao</span></div></div>
+                    <div class="stat-item"><div class="stat-icon stress"><i class="fas fa-gauge-high"></i></div><div class="stat-info"><span class="stat-value" id="stressLevel">--</span><span class="stat-label">Điểm tổng hợp TB</span></div></div>
+                </div>
+                <div class="summary-strip">
+                    <div class="summary-chip"><span>Khảo sát TB</span><strong id="surveyAverage">--</strong></div>
+                    <div class="summary-chip"><span>Mô hình ảnh</span><strong>EfficientNet</strong></div>
+                    <div class="summary-chip"><span>Nhật ký</span><strong>7 ngày</strong></div>
+                </div>
+            </div>
+        </section>
+        <section class="card chart-card">
+            <div class="card-header"><h2><i class="fas fa-chart-line"></i> Xu hướng 7 ngày</h2><a href="/history" class="btn btn-sm btn-outline">Xem chi tiết</a></div>
+            <div class="card-body"><canvas id="miniChart" width="600" height="250"></canvas><div class="no-data-placeholder" id="miniChartPlaceholder" style="display:none;"><i class="fas fa-chart-area"></i><p>Chưa có dữ liệu biểu đồ</p></div></div>
+        </section>
+        <section class="card actions-card full-width">
+            <div class="card-header"><h2><i class="fas fa-bolt"></i> Thao tác nhanh</h2></div>
+            <div class="card-body">
+                <div class="quick-actions">
+                    <a href="/capture" class="action-btn capture-action"><i class="fas fa-camera"></i><span>Phân tích ảnh + khảo sát</span><small>Kết hợp camera, ảnh và 20 câu hỏi</small></a>
+                    <a href="/history" class="action-btn history-action"><i class="fas fa-timeline"></i><span>Xem lịch sử</span><small>Theo dõi xu hướng stress 7 ngày</small></a>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+<script src="{{ url_for('static', filename='js/db.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
